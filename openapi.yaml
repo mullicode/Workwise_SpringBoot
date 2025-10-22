@@ -4,8 +4,8 @@ info:
   version: 1.0.0
   description: API documentation for managing employees and departments - built with Java Spring Boot and MongoDB
   contact:
-    name: Son Nguyen
-    email: hoangson091104@gmail.com
+    name: Matthew Mullins
+    email: matthewmullins1219@gmail.com
   license:
     name: MIT License
 servers:
