@@ -24,6 +24,16 @@ public class DepartmentService {
   }
 
   /**
+   * Search departments by name.
+   *
+   * @param name The name to search for (case-insensitive partial match)
+   * @return List of departments matching the search criteria
+   */
+  public List<Department> searchDepartmentsByName(String name) {
+    return departmentRepository.findByNameContainingIgnoreCase(name);
+  }
+
+  /**
    * Get department by ID.
    *
    * @param id ID of the department to be retrieved

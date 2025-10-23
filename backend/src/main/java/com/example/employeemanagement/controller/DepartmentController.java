@@ -35,6 +35,31 @@ public class DepartmentController {
   }
 
   /**
+   * Search departments by name API.
+   *
+   * @param name The name or partial name to search for
+   * @return List of departments matching the search criteria
+   */
+  @Operation(
+      summary = "Search departments by name",
+      description = "Retrieve departments filtered by name (case-insensitive partial match)")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Departments found"),
+      })
+  @GetMapping("/search")
+  public List<Department> searchDepartments(
+      @Parameter(
+              description = "Name or partial name to search for (case-insensitive)",
+              example = "Engineering")
+      @RequestParam(name = "name", required = false) String name) {
+    if (name == null || name.trim().isEmpty()) {
+      return getAllDepartments();
+    }
+    return departmentService.searchDepartmentsByName(name.trim());
+  }
+
+  /**
    * Get department by ID API.
    *
    * @param id ID of the department to be retrieved
