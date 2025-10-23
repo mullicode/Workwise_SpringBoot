@@ -26,11 +26,11 @@
     "warning": "^4.0.3"
   },
   "scripts": {
-    "start": "cd frontend && npm start",
+    "start": "cd frontend && npm dev",
     "server": "cd backend && mvn spring-boot:run",
-    "test": "cd frontend && npm start",
+    "test": "cd frontend && npm dev",
     "build": "cd frontend && npm run build",
-    "frontend": "cd frontend && npm start",
+    "frontend": "cd frontend && npm dev",
     "backend": "cd backend && mvn spring-boot:run",
     "dev": "concurrently \"npm run server\" \"npm run frontend\"",
     "install": "cd frontend && npm install && cd ../backend && mvn install -DskipTests",
