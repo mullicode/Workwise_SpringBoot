@@ -9,6 +9,11 @@ export const getAllDepartments = async () => {
   return response.data;
 };
 
+export const searchDepartments = async (query) => {
+  const response = await axios.get(`${API_URL}?q=${encodeURIComponent(query)}`);
+  return response.data;
+};
+
 // Get department by ID
 export const getDepartmentById = async id => {
   const response = await axios.get(`${API_URL}/${id}`);
