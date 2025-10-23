@@ -50,7 +50,8 @@ public class DepartmentController {
       })
   @GetMapping("/{id}")
   public ResponseEntity<Department> getDepartmentById(
-      @Parameter(description = "ID of the department to be retrieved") @PathVariable Long id) {
+      @Parameter(description = "ID of the department to be retrieved") 
+      @PathVariable Long id) {
     Department department =
         departmentService
             .getDepartmentById(id)
@@ -89,7 +90,8 @@ public class DepartmentController {
       })
   @PutMapping("/{id}")
   public ResponseEntity<Department> updateDepartment(
-      @Parameter(description = "ID of the department to be updated") @PathVariable Long id,
+      @Parameter(description = "ID of the department to be updated") 
+      @PathVariable Long id,
       @RequestBody Department departmentDetails) {
     Department department =
         departmentService
