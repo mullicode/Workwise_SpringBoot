@@ -10,7 +10,7 @@ export const getAllDepartments = async () => {
 };
 
 export const searchDepartments = async (query) => {
-  const response = await axios.get(`${API_URL}?q=${encodeURIComponent(query)}`);
+  const response = await axios.get(`${API_URL}/search?name=${encodeURIComponent(query)}`);
   return response.data;
 };
 
