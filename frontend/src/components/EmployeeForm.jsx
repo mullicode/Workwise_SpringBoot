@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addEmployee, getEmployeeById, updateEmployee } from '../services/employeeService';
-import { getAllDepartments } from '../services/departmentService';
-import { TextField, Button, MenuItem, Box, CircularProgress } from '@mui/material';
+import { getAllDepartments, searchDepartments } from '../services/departmentService';
+import { TextField, Button, MenuItem, Box, CircularProgress, Autocomplete } from '@mui/material';
 import { styled } from '@mui/system';
 
 const CenteredSpinner = styled('div')({
@@ -18,20 +18,42 @@ const EmployeeForm = () => {
     lastName: '',
     email: '',
     age: '',
-    department: { id: '' },
+    department: { id: '', name: '' },
   });
-  const [departments, setDepartments] = useState([]);
+  const [query, setQuery] = useState('');
+  const [deptOptions, setDeptOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let debounceTimer;
+    const fetchDepartments = async () => {
+      setLoading(true);
+      try {
+        let data;
+        if (query) {
+          data = await searchDepartments(query);
+        } else {
+          data = await getAllDepartments();
+        }
+        setDeptOptions(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+        setLoading(false);
+      }
+    };
+
+    debounceTimer = setTimeout(fetchDepartments, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [query, searchDepartments, getAllDepartments]);
+
+  useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const departmentsData = await getAllDepartments();
-        setDepartments(departmentsData);
-
         if (id) {
           const employeeData = await getEmployeeById(id);
           if (employeeData) {
@@ -42,8 +64,10 @@ const EmployeeForm = () => {
               age: employeeData.age || '',
               department: {
                 id: employeeData.department ? employeeData.department.id : '',
+                name: employeeData.department ? employeeData.department.name : '',
               },
             });
+            setQuery(employeeData.department?.name || '');
           }
         }
         setIsLoading(false);
@@ -99,14 +123,41 @@ const EmployeeForm = () => {
       <TextField label="Last Name" name="lastName" value={employee.lastName} onChange={handleChange} required />
       <TextField label="Email" name="email" type="email" value={employee.email} onChange={handleChange} required />
       <TextField label="Age" name="age" type="number" value={employee.age} onChange={handleChange} required inputProps={{ min: 1, max: 150 }} />
-      <TextField select label="Department" name="department.id" value={employee.department.id || ''} onChange={handleChange} required>
-        <MenuItem value="">Select Department</MenuItem>
-        {departments.map(department => (
-          <MenuItem key={department.id} value={department.id}>
-            {department.name}
-          </MenuItem>
-        ))}
-      </TextField>
+      <Autocomplete
+        options={deptOptions}
+        getOptionLabel={(option) => option.name || ''}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        onInputChange={(event, newInputValue) => {
+          setQuery(newInputValue);
+        }}
+        onChange={(event, newValue) => {
+          if (newValue) {
+            setEmployee({ ...employee, department: { id: newValue.id, name: newValue.name } });
+            setQuery(newValue.name);
+          } else {
+            setEmployee({ ...employee, department: { id: '', name: '' } });
+            setQuery('');
+          }
+        }}
+        value={employee.department}
+        loading={loading}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Department"
+            required
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {loading ? <CircularProgress color="small" /> : null}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            }}
+          />
+        )}
+      />
       <Button type="submit" variant="contained" color="primary" sx={{ marginTop: '1rem' }}>
         Save
       </Button>
