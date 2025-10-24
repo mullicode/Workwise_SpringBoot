@@ -57,14 +57,19 @@ const DepartmentList = () => {
   }, [isLoggedIn]);
 
   const handleDelete = async id => {
-    setDeletingDepartmentId(id);
-    try {
-      await deleteDepartment(id);
-      setDepartments(prevDepartments => prevDepartments.filter(department => department.id !== id));
-    } catch (error) {
-      console.error('Error deleting department:', error);
+    const confirmDelete = window.confirm(
+      'Deleting this department will remove all employees associated with it. Are you sure you want to delete this department?'
+    );
+    if (confirmDelete) {
+      setDeletingDepartmentId(id);
+      try {
+        await deleteDepartment(id);
+        setDepartments(prevDepartments => prevDepartments.filter(department => department.id !== id));
+      } catch (error) {
+        console.error('Error deleting department:', error);
+      }
+      setDeletingDepartmentId(null);
     }
-    setDeletingDepartmentId(null);
   };
 
   const handleSearchChange = event => {
