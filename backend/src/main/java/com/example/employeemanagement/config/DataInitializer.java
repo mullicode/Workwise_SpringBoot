@@ -33,7 +33,13 @@ public class DataInitializer implements CommandLineRunner {
    */
   @Override
   public void run(String... args) {
-    // Always clear existing data before inserting new data
+    // Check if data already exists
+    if (departmentRepository.count() > 0 || employeeRepository.count() > 0) {
+      System.out.println("Data already exists. Skipping fake data initialization.");
+      return;
+    }
+
+    // Clear existing data before inserting new data
     employeeRepository.deleteAll();
     departmentRepository.deleteAll();
 
