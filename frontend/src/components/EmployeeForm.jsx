@@ -126,6 +126,7 @@ const EmployeeForm = () => {
       <Autocomplete
         options={deptOptions}
         getOptionLabel={(option) => option.name || ''}
+        getOptionKey={option => option.id}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         onInputChange={(event, newInputValue) => {
           setQuery(newInputValue);
